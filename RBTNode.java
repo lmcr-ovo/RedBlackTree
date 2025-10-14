@@ -1,3 +1,5 @@
+import java.util.function.ToDoubleFunction;
+
 public class RBTNode<T extends Comparable<T>> {
     public T item;
     public RBTNode<T> left;
@@ -17,6 +19,7 @@ public class RBTNode<T extends Comparable<T>> {
     boolean isRed(RBTNode<T> node) {
         return node.isRed;
     }
+
     public static <T extends Comparable<T>>
     RBTNode<T> insert(RBTNode<T> node, T item) {
         if (node instanceof nullNode<T>)
@@ -62,5 +65,35 @@ public class RBTNode<T extends Comparable<T>> {
 
         node.isRed = true;
         return node;
+    }
+
+
+    public static <T extends Comparable<T>>
+    RBTNode<T> search(RBTNode<T> node,T item) {
+        if (node instanceof nullNode<T>) return node;
+        int cmp = item.compareTo(node.item);
+        if (cmp == 0) return node;
+        else if (cmp < 0) return search(node.left, item);
+        else return search(node.right, item);
+    }
+
+    public static <T extends Comparable<T>> RBTNode<T> nearest(
+            RBTNode<T> node, T item, RBTNode<T> nearestNode, ToDoubleFunction<T> valueFunc) {
+        if (node instanceof nullNode) return nearestNode;
+
+        if (nearestNode instanceof nullNode)
+            nearestNode = node;
+        else {
+            double currentDiff = Math.abs(valueFunc.applyAsDouble(item) - valueFunc.applyAsDouble(node.item));
+            double nearestDiff = Math.abs(valueFunc.applyAsDouble(item) - valueFunc.applyAsDouble(nearestNode.item));
+            if (nearestDiff > currentDiff)
+                nearestNode = node;
+        }
+
+        int cmp = item.compareTo(node.item);
+        if (cmp < 0) return nearest(node.left, item, nearestNode, valueFunc);
+        else if (cmp > 0) return nearest(node.right, item, nearestNode, valueFunc);
+        else return node;
+
     }
 }

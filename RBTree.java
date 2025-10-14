@@ -1,6 +1,14 @@
+import java.util.function.ToDoubleFunction;
+
 public class RBTree<T extends Comparable<T>> {
     private RBTNode<T> root;
     private int size;
+
+    public RBTree() {
+        root = new nullNode<>();
+        size = 0;
+    }
+
     public RBTree(T item) {
         root = new RBTNode<>(item);
         size = 1;
@@ -9,10 +17,19 @@ public class RBTree<T extends Comparable<T>> {
     public int size() {
         return size;
     }
+
     public void insert(T item) {
         root = RBTNode.insert(root, item);
         root.isRed = false;
         size++;
+    }
+
+    public RBTNode<T> search(T item) {
+        return RBTNode.search(root, item);
+    }
+
+    public RBTNode<T> nearest(T item, ToDoubleFunction<T> valueFunc) {
+        return RBTNode.nearest(root, item, new nullNode<>(), valueFunc);
     }
 
     // 在 RBTree 里加一层序 toString()
@@ -33,16 +50,5 @@ public class RBTree<T extends Comparable<T>> {
             sb.append('\n');
         }
         return sb.toString().trim();
-    }
-
-
-
-    public static void main(String[] args) {
-        RBTree<Integer> tree = new RBTree<>(0);
-        for (int i = 1; i < 100; i++) {
-            tree.insert(i);
-            System.out.println("insert "+ i +":");
-            System.out.println(tree);
-        }
     }
 }
